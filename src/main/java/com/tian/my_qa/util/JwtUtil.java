@@ -4,17 +4,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.Date;
 
 public class JwtUtil {
 
-    // 过期时间： 2小时
-    public static final long EXPIRE = 1000 * 60 * 60 * 2;
+    // 过期时间： 1小时
+    public static final long EXPIRE = 1000 * 60 * 60;
     // 加密密钥
     public static final String APP_SECRET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -74,6 +72,8 @@ public class JwtUtil {
         Jws<Claims> claimsJws =
                 Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJws(jwtToken);
         Claims claims = claimsJws.getBody();
+        Date dd = claims.getExpiration();
+        System.out.println(dd.toString() + "-------------------------------------------");
         return (String) claims.get("id");
     }
 }

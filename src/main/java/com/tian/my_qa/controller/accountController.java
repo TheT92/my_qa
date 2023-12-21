@@ -24,8 +24,6 @@ public class accountController {
         return accountService.getToken(loginUser);
     }
 
-    
-
     // 从 token 中获取信息
     @GetMapping("/check")
     public String check(@RequestHeader(value = "token", required = false) String token) {

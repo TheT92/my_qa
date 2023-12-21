@@ -8,16 +8,13 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Question {
+public class UserAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String category;
-    private String questionTitle;
-    private String questionContent;
-    private String rightAnswer;
-    private Integer createdBy;
-    private Integer delFlag;
+    private Integer userId;
+    private Integer questionId;
+    private String answer;
+    private Double rating;
     private String createdTime;
 }
-

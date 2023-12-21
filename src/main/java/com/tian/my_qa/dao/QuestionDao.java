@@ -12,12 +12,14 @@ import com.tian.my_qa.model.Question;
 
 @Repository
 public interface QuestionDao extends JpaRepository<Question, Integer> {
-    @Query(value = "SELECT * FROM question q where q.question_title like %?1% and q.del_flag != 1", nativeQuery = true)
-    List<Question> getQuestionList(String query);
+    @Query(value = "SELECT * FROM question q where q.question_title like %?1% and q.del_flag != 1 limit ?2 offset ?3", nativeQuery = true)
+    List<Question> getQuestionsPage(String query, Integer limit, Integer offset);
+
+    @Query(value = "SELECT count(*) FROM question q where q.question_title like %?1% and q.del_flag != 1", nativeQuery = true)
+    Integer getQuestionsPageNum(String query);
 
     @Query(value = "SELECT * FROM question q where q.id = :id and q.del_flag != 1", nativeQuery = true)
     Question getQuestionDetail(int id);
-
 
     // Spring boot 中delete和 update需要添加Modifying注解
     @Modifying

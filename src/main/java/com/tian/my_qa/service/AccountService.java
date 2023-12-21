@@ -26,9 +26,7 @@ public class AccountService {
             }
             return new ResponseEntity<>("", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
+            return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
     }
 }
