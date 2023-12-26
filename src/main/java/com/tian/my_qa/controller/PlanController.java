@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tian.my_qa.model.StudyPlan;
+import com.tian.my_qa.model.StudyPlanItem;
 import com.tian.my_qa.service.PlanService;
 
 @RestController
@@ -34,11 +35,21 @@ public class PlanController {
 
     @GetMapping("{id}")
     public ResponseEntity<StudyPlan> getPlan(@PathVariable int id, @RequestHeader(value = "token", required = true) String token) {
-        return ps.findById(id);
+        return ps.findById(id, token);
     }
 
     @PostMapping("editPlan")
     public ResponseEntity<String> editPlan(@RequestBody StudyPlan plan) {
         return ps.editPlan(plan);
+    }
+
+    @PostMapping("addItem")
+    public ResponseEntity<String> addItem(@RequestBody StudyPlanItem item, @RequestHeader(value = "token", required = true) String token) {
+        return ps.addItem(item, token);
+    }
+
+    @GetMapping("planItems")
+    public ResponseEntity<Map<String, Object>> getPlanItems(@RequestParam int planId, @RequestParam Integer pageNum, @RequestParam Integer pageSize, @RequestHeader(value = "token", required = true) String token) {
+        return ps.getPlanItems(planId, pageNum, pageSize, token);
     }
 }
