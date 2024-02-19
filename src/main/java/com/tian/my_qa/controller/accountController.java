@@ -15,7 +15,7 @@ import com.tian.my_qa.util.JwtUtil;
 
 @RestController
 @RequestMapping("account")
-public class accountController {
+public class AccountController {
     @Autowired
     AccountService accountService;
      // 模拟登录请求

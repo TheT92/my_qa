@@ -12,7 +12,7 @@ import com.tian.my_qa.model.Question;
 
 @Repository
 public interface QuestionDao extends JpaRepository<Question, Integer> {
-    @Query(value = "SELECT * FROM question q where q.question_title like %?1% and q.del_flag != 1 limit ?2 offset ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM question q where q.question_title like %:query% and q.del_flag != 1 order by id desc limit :limit offset :offset", nativeQuery = true)
     List<Question> getQuestionsPage(String query, Integer limit, Integer offset);
 
     @Query(value = "SELECT count(*) FROM question q where q.question_title like %?1% and q.del_flag != 1", nativeQuery = true)

@@ -8,12 +8,12 @@ import lombok.Data;
 
 @Data
 @Entity
-public class UserAnswer {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
-    private Integer questionId;
-    private Double rating;
+    private String url;
     private Long createTime;
+    private String physicalPath;
+    private Integer delFlag;  
 }

@@ -5,7 +5,6 @@
  */
 package com.tian.my_qa.service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ public class QuestionService {
     // 查询所有题目
     // spring.jpa.hibernate.ddl-auto=create 每次会重新建表，且会执行import.sql
     public ResponseEntity<Map<String, Object>> getQuestionsPage(String query, Integer pageNum, Integer pageSize) {
-
         try {
             Map<String, Object> res = new HashMap<>();
             Integer offset = (pageNum > 1 ? pageNum - 1 : 0) * pageSize;
@@ -52,13 +50,14 @@ public class QuestionService {
         try {
             String id = JwtUtil.getMemberIdByJwtToken(token);
             question.setCreatedBy(Integer.parseInt(id));
-            String now = new Date().toString();
-            question.setCreatedTime(now);
+            question.setDelFlag(0);
+            question.setCreateTime(System.currentTimeMillis());
             qd.save(question);
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (ExpiredJwtException e) {
             return new ResponseEntity<>("fail", HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
         }
     }
@@ -98,8 +97,7 @@ public class QuestionService {
         try {
             String id = JwtUtil.getMemberIdByJwtToken(token);
             userAnswer.setUserId(Integer.parseInt(id));
-            String now = new Date().toString();
-            userAnswer.setCreatedTime(now);
+            userAnswer.setCreateTime(System.currentTimeMillis());
             ud.save(userAnswer);
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (ExpiredJwtException e) {

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.tian.my_qa.model.StudyPlan;
-import com.tian.my_qa.model.StudyPlanItem;
 
 @Repository
 public interface PlanDao extends JpaRepository<StudyPlan, Integer> {

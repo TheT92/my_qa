@@ -52,6 +52,7 @@ public class PlanService {
             plan.setUserId(Integer.parseInt(id));
             String now = new Date().toString();
             plan.setCreatedTime(now);
+            plan.setDelFlag(0);
             pd.save(plan);
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (ExpiredJwtException e) {

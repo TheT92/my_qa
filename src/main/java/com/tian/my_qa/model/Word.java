@@ -8,12 +8,14 @@ import lombok.Data;
 
 @Data
 @Entity
-public class UserAnswer {
+public class Word {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
-    private Integer questionId;
-    private Double rating;
+    private String word;
+    private String tips;
+    private Integer type;
+    private String imgUrl;
+    private Integer delFlag;
     private Long createTime;
 }
