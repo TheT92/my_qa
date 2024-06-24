@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tian.my_qa.model.Account;
 import com.tian.my_qa.model.LoginUser;
 import com.tian.my_qa.service.AccountService;
 import com.tian.my_qa.util.JwtUtil;
@@ -23,6 +24,13 @@ public class AccountController {
     public ResponseEntity<String> login( @RequestBody LoginUser loginUser) {
         return accountService.getToken(loginUser);
     }
+
+     // 获取用户信息
+     @GetMapping("/user")
+     public ResponseEntity<Account> user(@RequestHeader(value = "token", required = true) String token) {
+        String id = JwtUtil.getMemberIdByJwtToken(token); 
+        return accountService.getUserInfo(Integer.parseInt(id));
+     }
 
     // 从 token 中获取信息
     @GetMapping("/check")

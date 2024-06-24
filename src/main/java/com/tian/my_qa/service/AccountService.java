@@ -29,4 +29,21 @@ public class AccountService {
             return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
         }
     }
+
+    public ResponseEntity<Account> getUserInfo(int id) {
+        try {
+            Account account = accountDao.getUserInfo(id);
+            if (account != null && account.getLoginAccount() != null) {
+                account.setDelFlag(null);
+                account.setLoginAccount(null);
+                account.setPassword(null);
+                account.setRoleId(null);
+                return new ResponseEntity<>(account, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
