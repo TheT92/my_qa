@@ -15,9 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.tian.my_qa.dao.QuestionDao;
+import com.tian.my_qa.dao.QuestionStatisticsDao;
 import com.tian.my_qa.dao.UserAnswerDao;
+import com.tian.my_qa.dto.QuestionDto;
+import com.tian.my_qa.dto.QuestionStatisticsDto;
+import com.tian.my_qa.dto.UserAnswerDto;
 import com.tian.my_qa.model.Question;
-import com.tian.my_qa.model.UserAnswer;
 import com.tian.my_qa.util.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,6 +31,8 @@ public class QuestionService {
     QuestionDao qd;
     @Autowired
     UserAnswerDao ud;
+    @Autowired
+    QuestionStatisticsDao qsd;
 
     // 查询所有题目
     // spring.jpa.hibernate.ddl-auto=create 每次会重新建表，且会执行import.sql
@@ -73,10 +78,13 @@ public class QuestionService {
     }
 
     // 查询详情
-    public ResponseEntity<Question> findById(int id) {
+    public ResponseEntity<QuestionDto> findById(int id) {
         try {
             Question question = qd.getQuestionDetail(id);
-            return new ResponseEntity<>(question, HttpStatus.OK);
+            Integer prev = qd.findPrevQuestionId(id);
+            Integer next = qd.findNextQuestionId(id);
+            QuestionDto dto = new QuestionDto(question, prev, next);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -93,16 +101,32 @@ public class QuestionService {
     }
 
     // 用户答题
-    public ResponseEntity<String> submitAnswer(UserAnswer userAnswer, String token) {
+    public ResponseEntity<String> submitAnswer(UserAnswerDto dto, String token) {
         try {
-            String id = JwtUtil.getMemberIdByJwtToken(token);
-            userAnswer.setUserId(Integer.parseInt(id));
-            userAnswer.setCreateTime(System.currentTimeMillis());
-            ud.save(userAnswer);
+            String userId = JwtUtil.getMemberIdByJwtToken(token);
+            ud.saveAnswer(dto.getRating(), Integer.parseInt(userId), dto.getQuestionId(), System.currentTimeMillis());
+
+            // 更新统计信息
+            QuestionStatisticsDto stats = qsd.getUserQuestionStatistics(dto.getQuestionId(), Integer.parseInt(userId));
+            if (stats == null) {
+                stats = new QuestionStatisticsDto();
+                stats.setQuestionId(dto.getQuestionId());
+                stats.setUserId(Integer.parseInt(userId));
+                stats.setTotalCounts(1);
+                stats.setTotalMarks(dto.getRating());
+                stats.setDelFlag(0);
+                qsd.insertData(stats);
+            } else {
+                stats.setTotalCounts(stats.getTotalCounts() + 1);
+                stats.setTotalMarks(stats.getTotalMarks() + dto.getRating());
+                qsd.updateData(stats);
+            }
             return new ResponseEntity<>("success", HttpStatus.CREATED);
         } catch (ExpiredJwtException e) {
+            e.printStackTrace();
             return new ResponseEntity<>("fail", HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
         }
     }

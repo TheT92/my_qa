@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tian.my_qa.dto.QuestionDto;
+import com.tian.my_qa.dto.UserAnswerDto;
 import com.tian.my_qa.model.Question;
-import com.tian.my_qa.model.UserAnswer;
 import com.tian.my_qa.service.QuestionService;
 
 @RestController
@@ -24,7 +25,7 @@ public class QuestionController {
     QuestionService qs;
 
     @GetMapping("{id}")
-    public ResponseEntity<Question> getQuestion(@PathVariable int id, @RequestHeader(value = "token", required = true) String token) {
+    public ResponseEntity<QuestionDto> getQuestion(@PathVariable int id, @RequestHeader(value = "token", required = true) String token) {
         return qs.findById(id);
     }
 
@@ -49,7 +50,7 @@ public class QuestionController {
     }
 
     @PostMapping("submitAnswer")
-    public ResponseEntity<String> submitAnswer(@RequestBody UserAnswer userAnswer, @RequestHeader(value = "token", required = true) String token) {
+    public ResponseEntity<String> submitAnswer(@RequestBody UserAnswerDto userAnswer, @RequestHeader(value = "token", required = true) String token) {
         return qs.submitAnswer(userAnswer, token);
     }
 

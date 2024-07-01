@@ -11,20 +11,24 @@ import lombok.Data;
 
 @Data
 @Entity
-public class UserAnswer {
-
+public class QuestionStatistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "FK_QUESTION_ID"))
+    private Question question;
 
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_USER_CORRECT_RATE"))
     private Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "FK_QUESTION_ID"))
-    private Question question;
+    private double totalMarks;
+    private Integer totalCounts;
+    private Integer delFlag;
 
-    private Double rating;
-    private Long createTime;
+    public Double getCorrectRate() {
+        return totalCounts <= 5 ? -1 : (double) totalMarks / totalCounts;
+    }
 }

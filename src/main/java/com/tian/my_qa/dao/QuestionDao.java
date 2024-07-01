@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,4 +27,12 @@ public interface QuestionDao extends JpaRepository<Question, Integer> {
     @Transactional
     @Query(value = "UPDATE question q SET del_flag=1 WHERE q.id = :id", nativeQuery = true)
     void deleteQuestion(int id);
+
+    // 获取上一题
+    @Query(value = "SELECT q.id FROM question q WHERE q.id < :currentId and q.del_flag != 1 ORDER BY q.id DESC LIMIT 1", nativeQuery = true)
+    Integer findPrevQuestionId(@Param("currentId") Integer currentId);
+
+    // 获取下一题
+    @Query(value = "SELECT q.id FROM question q WHERE q.id > :currentId and q.del_flag != 1 ORDER BY q.id ASC LIMIT 1", nativeQuery = true)
+    Integer findNextQuestionId(@Param("currentId") Integer currentId);
 }
