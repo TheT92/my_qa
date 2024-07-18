@@ -30,8 +30,8 @@ public class QuestionController {
     }
 
     @GetMapping("questionsPage")
-    public ResponseEntity<Map<String, Object>> getQuestionsPage(@RequestParam String query, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        return qs.getQuestionsPage(query, pageNum, pageSize);
+    public ResponseEntity<Map<String, Object>> getQuestionsPage(@RequestParam String tag, @RequestParam String query, @RequestParam Integer pageNum, @RequestParam Integer pageSize,  @RequestHeader(value = "token", required = true) String token) {
+        return qs.getQuestionsPage(tag, query, pageNum, pageSize, token);
     }
 
     @PostMapping("addQuestion")

@@ -15,4 +15,7 @@ public interface WordDao extends JpaRepository<Word, Integer> {
 
     @Query(value = "SELECT count(*) FROM word w where w.word like %?1% and w.del_flag != 1", nativeQuery = true)
     Integer getWordPageNum(String query);
+
+    @Query(value = "SELECT * FROM word w where w.id = :id and w.del_flag != 1", nativeQuery = true)
+    Word getWordDetail(int id);
 }

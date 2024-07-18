@@ -34,6 +34,19 @@ public class WordService {
         }
     }
 
+    // 修改题目
+    public ResponseEntity<String> editWord(Word word) {
+        try {
+            wordDao.save(word);
+            return new ResponseEntity<>("success", HttpStatus.CREATED);
+        } catch (ExpiredJwtException e) {
+            return new ResponseEntity<>("fail", HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     public ResponseEntity<Map<String, Object>> getWordPage(String query, Integer pageNum, Integer pageSize) {
         try {
             Map<String, Object> res = new HashMap<>();
@@ -44,6 +57,17 @@ public class WordService {
             res.put("total", total);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<Word> findById(int id) {
+        try {
+            Word word = wordDao.getWordDetail(id);
+            return new ResponseEntity<>(word, HttpStatus.OK);
+        } catch (ExpiredJwtException e) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }  catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }

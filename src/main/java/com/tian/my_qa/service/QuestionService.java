@@ -18,6 +18,7 @@ import com.tian.my_qa.dao.QuestionDao;
 import com.tian.my_qa.dao.QuestionStatisticsDao;
 import com.tian.my_qa.dao.UserAnswerDao;
 import com.tian.my_qa.dto.QuestionDto;
+import com.tian.my_qa.dto.QuestionListDto;
 import com.tian.my_qa.dto.QuestionStatisticsDto;
 import com.tian.my_qa.dto.UserAnswerDto;
 import com.tian.my_qa.model.Question;
@@ -36,16 +37,18 @@ public class QuestionService {
 
     // 查询所有题目
     // spring.jpa.hibernate.ddl-auto=create 每次会重新建表，且会执行import.sql
-    public ResponseEntity<Map<String, Object>> getQuestionsPage(String query, Integer pageNum, Integer pageSize) {
+    public ResponseEntity<Map<String, Object>> getQuestionsPage(String tag, String query, Integer pageNum, Integer pageSize, String token) {
         try {
+            String userId = JwtUtil.getMemberIdByJwtToken(token);
             Map<String, Object> res = new HashMap<>();
             Integer offset = (pageNum > 1 ? pageNum - 1 : 0) * pageSize;
-            List<Question> list = qd.getQuestionsPage(query, pageSize, offset);
-            Integer total = qd.getQuestionsPageNum(query);
+            List<QuestionListDto> list = qd.getQuestionsPage(tag, query, pageSize, offset, Integer.parseInt(userId));
+            Integer total = qd.getQuestionsPageNum(tag, query);
             res.put("list", list);
             res.put("total", total);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
