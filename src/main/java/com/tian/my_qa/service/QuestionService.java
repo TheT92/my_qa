@@ -5,9 +5,8 @@
  */
 package com.tian.my_qa.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.BiFunction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +16,14 @@ import org.springframework.stereotype.Service;
 import com.tian.my_qa.dao.QuestionDao;
 import com.tian.my_qa.dao.QuestionStatisticsDao;
 import com.tian.my_qa.dao.UserAnswerDao;
+import com.tian.my_qa.dto.Pager;
 import com.tian.my_qa.dto.QuestionDto;
 import com.tian.my_qa.dto.QuestionListDto;
 import com.tian.my_qa.dto.QuestionStatisticsDto;
 import com.tian.my_qa.dto.UserAnswerDto;
 import com.tian.my_qa.model.Question;
 import com.tian.my_qa.util.JwtUtil;
+import com.tian.my_qa.util.Util;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
@@ -37,16 +38,17 @@ public class QuestionService {
 
     // 查询所有题目
     // spring.jpa.hibernate.ddl-auto=create 每次会重新建表，且会执行import.sql
-    public ResponseEntity<Map<String, Object>> getQuestionsPage(String tag, String query, Integer pageNum, Integer pageSize, String token) {
+    public ResponseEntity<Pager<QuestionListDto>> getQuestionsPage(String tag, String query, Integer pageNum, Integer pageSize, String token) {
         try {
-            String userId = JwtUtil.getMemberIdByJwtToken(token);
-            Map<String, Object> res = new HashMap<>();
-            Integer offset = (pageNum > 1 ? pageNum - 1 : 0) * pageSize;
+            String userId = Util.getUserIdByToken.apply(token);
+            Integer offset = Util.getPageOffset.apply(pageNum, pageSize);
             List<QuestionListDto> list = qd.getQuestionsPage(tag, query, pageSize, offset, Integer.parseInt(userId));
             Integer total = qd.getQuestionsPageNum(tag, query);
-            res.put("list", list);
-            res.put("total", total);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            BiFunction<List<QuestionListDto>, Integer, Pager<QuestionListDto>> s = Pager::new;
+            Pager<QuestionListDto> pager = s.apply(list, total);
+            return new ResponseEntity<>(pager, HttpStatus.OK);
+        } catch (ExpiredJwtException e) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

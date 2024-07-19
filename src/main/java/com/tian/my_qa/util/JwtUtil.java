@@ -66,9 +66,7 @@ public class JwtUtil {
      * @return
      */
     public static String getMemberIdByJwtToken(String jwtToken) {
-        if (StringUtils.isEmpty(jwtToken)) {
-            return "";
-        }
+        if (jwtToken.isEmpty()) return "";
         Jws<Claims> claimsJws =
                 Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJws(jwtToken);
         Claims claims = claimsJws.getBody();

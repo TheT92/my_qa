@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tian.my_qa.dto.Pager;
 import com.tian.my_qa.dto.QuestionDto;
+import com.tian.my_qa.dto.QuestionListDto;
 import com.tian.my_qa.dto.UserAnswerDto;
 import com.tian.my_qa.model.Question;
 import com.tian.my_qa.service.QuestionService;
@@ -30,7 +32,7 @@ public class QuestionController {
     }
 
     @GetMapping("questionsPage")
-    public ResponseEntity<Map<String, Object>> getQuestionsPage(@RequestParam String tag, @RequestParam String query, @RequestParam Integer pageNum, @RequestParam Integer pageSize,  @RequestHeader(value = "token", required = true) String token) {
+    public ResponseEntity<Pager<QuestionListDto>> getQuestionsPage(@RequestParam String tag, @RequestParam String query, @RequestParam Integer pageNum, @RequestParam Integer pageSize,  @RequestHeader(value = "token", required = true) String token) {
         return qs.getQuestionsPage(tag, query, pageNum, pageSize, token);
     }
 
